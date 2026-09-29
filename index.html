@@ -1,1 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kerala Workshop Directory — Claim Registration Lookup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1B1F23;
+    --steel:#3A4B5C;
+    --steel-light:#5B7083;
+    --paper:#F2F0EA;
+    --paper-panel:#FFFFFF;
+    --hairline:#D8D3C7;
+    --safety:#1A469D;
+    --safety-dark:#123472;
+    --yellow:#FFC600;
+    --yellow-ink:#7A5B00;
+    --brass:#B08A3E;
+    --ok-bg:#EAF2EA;
+    --ok-ink:#2F5E3A;
+    --minor-bg:#EDF1F5;
+    --minor-ink:#3A5A78;
+    --dealer-bg:#FFF6D6;
+    --dealer-ink:#7A5B00;
+    --other-bg:#EFEBF3;
+    --other-ink:#5C4A78;
+    --road-bg:#FBEAE7;
+    --road-ink:#A13B24;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+    --display:'Oswald', sans-serif;
+    --body:'Inter', sans-serif;
+  }
 
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--body);
+    background:var(--paper);
+    color:var(--ink);
+    background-image:
+      linear-gradient(var(--hairline) 1px, transparent 1px),
+      linear-gradient(90deg, var(--hairline) 1px, transparent 1px);
+    background-size:28px 28px;
+    background-position:-1px -1px;
+    min-height:100vh;
+  }
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px 60px;}
+
+  /* ---------- Header ---------- */
+  header.masthead{
+    background:var(--ink);
+    background-image:
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 2px, transparent 2px, transparent 14px);
+    color:#F4F1E8;
+    padding:30px 20px 26px;
+    border-bottom:5px solid var(--safety);
+  }
+  .masthead-inner{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;}
+  .masthead-title{display:flex;align-items:center;gap:14px;}
+  .badge-mark{
+    width:46px;height:46px;flex:none;
+    background:var(--safety);border:2px solid var(--yellow);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--display);font-weight:700;font-size:18px;color:var(--yellow);
+    transform:rotate(-3deg);
+  }
+  h1{
+    font-family:var(--display);
+    font-weight:600;
+    font-size:clamp(24px,3.4vw,34px);
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    margin:0;
+    line-height:1.05;
+  }
+  h1 span{color:var(--yellow);}
+  .subtitle{
+    font-family:var(--body);
+    font-size:13px;
+    color:#C9C4B4;
+    margin-top:6px;
+    letter-spacing:0.3px;
+  }
+  .stat-strip{display:flex;gap:22px;text-align:right;}
+  .stat{display:flex;flex-direction:column;}
+  .stat b{font-family:var(--mono);font-size:22px;color:#F4F1E8;line-height:1;}
+  .stat span{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:#9AA4AC;margin-top:4px;}
+
+  /* ---------- Search panel ---------- */
+  .panel{
+    background:var(--paper-panel);
+    border:1px solid var(--hairline);
+    box-shadow:0 2px 0 var(--hairline);
+    margin-top:-1px;
+    position:sticky;
+    top:0;
+    z-index:20;
+  }
+  .panel-inner{max-width:1180px;margin:0 auto;padding:18px 20px 16px;}
+  .panel-label{
+    font-family:var(--mono);
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:1.5px;
+    color:var(--steel-light);
+    margin-bottom:8px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .panel-label::before{content:"";width:8px;height:8px;background:var(--safety);display:inline-block;}
+
+  .search-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .search-main{flex:1 1 320px;position:relative;}
+  .search-main input{
+    width:100%;
+    font-family:var(--mono);
+    font-size:15px;
+    padding:12px 14px 12px 40px;
+    border:1.5px solid var(--ink);
+    background:var(--paper-panel);
+    color:var(--ink);
+  }
+  .search-main input:focus{outline:2px solid var(--safety);outline-offset:1px;}
+  .search-main::before{
+    content:"⌕";
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    font-size:18px;color:var(--steel-light);pointer-events:none;
+  }
+  .filters{display:flex;gap:10px;flex-wrap:wrap;flex:2 1 480px;}
+  select, .pincode-input{
+    font-family:var(--body);
+    font-size:13.5px;
+    padding:11px 10px;
+    border:1.5px solid var(--hairline);
+    background:var(--paper-panel);
+    color:var(--ink);
+    min-width:150px;
+    flex:1;
+  }
+  select:focus, .pincode-input:focus{outline:2px solid var(--safety);outline-offset:1px;border-color:var(--ink);}
+  .pincode-input{font-family:var(--mono);min-width:120px;flex:0 1 140px;}
+
+  .field-note{display:flex;justify-content:space-between;align-items:center;margin-top:10px;flex-wrap:wrap;gap:8px;}
+  .hint{font-size:12px;color:var(--steel-light);}
+  .btn-group{display:flex;gap:8px;}
+  .clear-btn{
+    font-family:var(--body);font-size:12px;font-weight:600;
+    background:none;border:1px solid var(--hairline);color:var(--steel);
+    padding:6px 12px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  }
+  .clear-btn:hover{border-color:var(--safety);color:var(--safety-dark);}
+  .search-btn{
+    font-family:var(--body);font-size:12px;font-weight:600;
+    background:var(--safety);border:1px solid var(--safety);color:#fff;
+    padding:6px 14px;cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;
+  }
+  .search-btn:hover{background:var(--safety-dark);border-color:var(--safety-dark);}
+
+  /* ---------- Results ---------- */
+  .results-meta{
+    display:flex;justify-content:space-between;align-items:baseline;
+    margin:20px 0 10px;
+    font-family:var(--mono);font-size:12.5px;color:var(--steel);
+    flex-wrap:wrap;gap:6px;
+  }
+  .results-meta b{color:var(--ink);font-size:14px;}
+
+  .empty-state{
+    background:var(--paper-panel);
+    border:1px dashed var(--hairline);
+    padding:60px 30px;
+    text-align:center;
+    color:var(--steel-light);
+    margin-top:10px;
+  }
+  .empty-state .glyph{font-size:34px;margin-bottom:10px;color:var(--hairline);}
+  .empty-state b{color:var(--steel);display:block;font-family:var(--display);font-size:16px;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;}
+
+  .card-grid{display:flex;flex-direction:column;gap:1px;background:var(--hairline);border:1px solid var(--hairline);margin-top:2px;}
+  .row-card{
+    background:var(--paper-panel);
+    padding:14px 16px;
+    display:grid;
+    grid-template-columns:150px 1fr 210px 40px;
+    gap:16px;
+    align-items:start;
+  }
+  .row-card:hover{background:#FCFBF8;}
+
+  .code-block{display:flex;flex-direction:column;gap:6px;}
+  .code-val{
+    font-family:var(--mono);font-weight:600;font-size:14.5px;
+    color:var(--ink);
+    letter-spacing:0.3px;
+  }
+  .type-tag{
+    display:inline-block;
+    font-family:var(--body);font-weight:600;font-size:10px;
+    text-transform:uppercase;letter-spacing:0.6px;
+    padding:3px 7px;
+    width:fit-content;
+  }
+  .type-major{background:var(--ok-bg);color:var(--ok-ink);}
+  .type-minor{background:var(--minor-bg);color:var(--minor-ink);}
+  .type-authorized{background:var(--ok-bg);color:var(--ok-ink);}
+  .type-dealer{background:var(--dealer-bg);color:var(--dealer-ink);}
+  .type-others{background:var(--other-bg);color:var(--other-ink);}
+  .type-roadside{background:var(--road-bg);color:var(--road-ink);}
+  .type-windshield{background:var(--other-bg);color:var(--other-ink);}
+  .type-notspecified{background:#EFEFEF;color:#888;}
+
+  .main-info .name{font-family:var(--display);font-size:16px;font-weight:500;text-transform:uppercase;letter-spacing:0.2px;color:var(--ink);}
+  .main-info .addr{font-size:12.5px;color:var(--steel);margin-top:3px;line-height:1.4;}
+  .main-info .district-pin{font-size:11px;color:var(--steel-light);margin-top:4px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.4px;}
+
+  .contact-info{font-size:12px;color:var(--steel);line-height:1.6;}
+  .contact-info .cperson{font-weight:600;color:var(--ink);font-size:12.5px;}
+  .contact-info a{color:var(--steel-light);text-decoration:none;}
+  .contact-info a:hover{color:var(--safety-dark);text-decoration:underline;}
+  .contact-info .none{color:var(--hairline);font-style:italic;}
+
+  .kyc-strip{
+    grid-column:1 / -1;
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed var(--hairline);
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px 22px;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--steel-light);
+  }
+  .kyc-strip b{color:var(--steel);font-weight:600;}
+  .kyc-strip .kyc-item{white-space:nowrap;}
+
+  mark.hl{
+    background:var(--yellow);
+    color:var(--ink);
+    padding:0 1px;
+    border-radius:1px;
+  }
+
+  .copy-btn{
+    width:34px;height:34px;
+    border:1.5px solid var(--hairline);
+    background:var(--paper-panel);
+    color:var(--steel);
+    cursor:pointer;
+    font-size:14px;
+    display:flex;align-items:center;justify-content:center;
+    transition:all .12s ease;
+  }
+  .copy-btn:hover{border-color:var(--safety);color:var(--safety-dark);}
+  .copy-btn.copied{background:var(--safety);border-color:var(--safety);color:#fff;}
+
+  .load-more-wrap{text-align:center;margin-top:20px;}
+  .load-more{
+    font-family:var(--body);font-weight:600;font-size:13px;
+    background:var(--safety);color:#fff;
+    border:none;padding:12px 26px;cursor:pointer;
+    text-transform:uppercase;letter-spacing:0.8px;
+  }
+  .load-more:hover{background:var(--safety-dark);}
+
+  footer{
+    text-align:center;padding:26px 20px 10px;
+    font-size:11px;color:var(--steel-light);
+    font-family:var(--mono);
+  }
+
+  @media (max-width:720px){
+    .row-card{grid-template-columns:1fr 34px;grid-template-rows:auto auto auto;}
+    .code-block{grid-column:1;order:1;flex-direction:row;align-items:center;gap:10px;}
+    .main-info{grid-column:1;order:2;}
+    .contact-info{grid-column:1;order:3;margin-top:4px;}
+    .copy-btn{grid-row:1;grid-column:2;}
+    .masthead-inner{flex-direction:column;align-items:flex-start;}
+    .stat-strip{text-align:left;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="masthead-title">
+      <div class="badge-mark">KL</div>
+      <div>
+        <h1>Workshop <span>Directory</span></h1>
+        <div class="subtitle">Active motor workshops in Kerala — for claim registration lookup</div>
+      </div>
+    </div>
+    <div class="stat-strip">
+      <div class="stat"><b id="statTotal">—</b><span>Workshops</span></div>
+      <div class="stat"><b id="statTypes">—</b><span>Types</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="panel">
+  <div class="panel-inner">
+    <div class="panel-label">Search &amp; filter</div>
+    <div class="search-row">
+      <div class="search-main">
+        <input type="text" id="qText" placeholder="Search by name, address or contact person…" autocomplete="off">
+      </div>
+      <div class="filters">
+        <input type="text" class="pincode-input" id="qCode" placeholder="Workshop code" autocomplete="off">
+        <input type="text" class="pincode-input" id="qPhone" placeholder="Phone / mobile" autocomplete="off">
+        <input type="text" class="pincode-input" id="qPincode" placeholder="Pincode" autocomplete="off">
+        <input type="text" class="pincode-input" id="qPan" placeholder="PAN" autocomplete="off">
+        <input type="text" class="pincode-input" id="qGst" placeholder="GST No." autocomplete="off">
+        <input type="text" class="pincode-input" id="qBank" placeholder="Bank a/c no." autocomplete="off">
+        <select id="qDistrict"><option value="">All districts</option></select>
+        <select id="qType"><option value="">All workshop types</option></select>
+      </div>
+    </div>
+    <div class="field-note">
+      <span class="hint" id="hintText">Fill in any combination of fields, then press Enter or Search — exact matches show first.</span>
+      <div class="btn-group">
+        <button class="search-btn" id="searchBtn">Search</button>
+        <button class="clear-btn" id="clearBtn">Clear all</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="results-meta" id="resultsMeta" style="display:none;">
+    <span><b id="resultCount">0</b> matching workshops</span>
+    <span id="resultRange"></span>
+  </div>
+
+  <div class="empty-state" id="emptyState">
+    <div class="glyph">⌕</div>
+    <b>Loading workshop database…</b>
+    Please wait while the workshop database loads…
+  </div>
+
+  <div class="card-grid" id="cardGrid" style="display:none;"></div>
+
+  <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+    <button class="load-more" id="loadMoreBtn">Show more results</button>
+  </div>
+</div>
+
+<footer>Kerala workshop list (UIIC) · 57831 records · Search runs entirely in your browser — no workshop data is sent to a server.</footer>
+
+<script>
+/* WORKSHOP_DATA and WORKSHOP_META are injected below */
+const COLS = ['code','name','address','district','type','contact','phone','mobile','email','pincode','pan','gst','bankacc','bankname','ifsc'];
+/* Workshop database is loaded asynchronously from workshop-data.json */
+let DATA = [];
+const META = {"districts":["ALAPPUZHA","ALL INDIA","ALUVA","COIMBATORE","ERNAKULAM","IDUKKI","KANNUR","KASARAGOD","KOLLAM","KOTTAYAM","KOZHIKODE","MADURAI","MALAPPURAM","PALAKKAD","PATHANAMTHITTA","THIRUVANANTHAPURAM","THRISSUR","WAYANAD","WEST DELHI"],"types":["Authorized workshop","Dealer","Major Workshop","Minor Workshop","Not specified","Others","Roadside Repairer","Windshield Experts"],"total":57831};
+
+
+const PAGE_SIZE = 60;
+let currentResults = [];
+let shown = 0;
+let activeQuery = { text:'', code:'', phone:'', pincode:'', pan:'', gst:'', bank:'' };
+
+const els = {
+  qText: document.getElementById('qText'),
+  qCode: document.getElementById('qCode'),
+  qPhone: document.getElementById('qPhone'),
+  qPincode: document.getElementById('qPincode'),
+  qPan: document.getElementById('qPan'),
+  qGst: document.getElementById('qGst'),
+  qBank: document.getElementById('qBank'),
+  qDistrict: document.getElementById('qDistrict'),
+  qType: document.getElementById('qType'),
+  cardGrid: document.getElementById('cardGrid'),
+  emptyState: document.getElementById('emptyState'),
+  resultsMeta: document.getElementById('resultsMeta'),
+  resultCount: document.getElementById('resultCount'),
+  resultRange: document.getElementById('resultRange'),
+  loadMoreWrap: document.getElementById('loadMoreWrap'),
+  loadMoreBtn: document.getElementById('loadMoreBtn'),
+  hintText: document.getElementById('hintText'),
+  clearBtn: document.getElementById('clearBtn'),
+  searchBtn: document.getElementById('searchBtn'),
+  statTotal: document.getElementById('statTotal'),
+  statTypes: document.getElementById('statTypes'),
+};
+
+async function loadWorkshopData(){
+  try{
+    const response = await fetch('./workshop-data.json', {cache:'no-store'});
+    if(!response.ok) throw new Error('HTTP ' + response.status);
+    DATA = await response.json();
+
+    populateSelect(els.qDistrict, META.districts);
+    populateSelect(els.qType, META.types);
+    els.statTotal.textContent = META.total.toLocaleString('en-IN');
+    els.statTypes.textContent = META.types.length;
+
+    els.hintText.textContent =
+      'Database loaded. Fill in any combination of fields, then press Enter or Search.';
+    render(true);
+  }catch(err){
+    console.error('Workshop database failed to load:', err);
+    els.emptyState.style.display = 'block';
+    els.emptyState.querySelector('b').textContent = 'Database could not be loaded';
+    els.emptyState.lastChild.textContent =
+      'Make sure workshop-data.json is uploaded in the same GitHub Pages folder as index.html.';
+  }
+}
+
+function populateSelect(sel, values, label){
+  values.forEach(v => {
+    const o = document.createElement('option');
+    o.value = v; o.textContent = v;
+    sel.appendChild(o);
+  });
+}
+function typeClass(t){
+  const s = (t||'').toLowerCase();
+  if(s.includes('major')) return 'type-major';
+  if(s.includes('minor')) return 'type-minor';
+  if(s.includes('authorized')) return 'type-authorized';
+  if(s.includes('dealer')) return 'type-dealer';
+  if(s.includes('roadside')) return 'type-roadside';
+  if(s.includes('windshield')) return 'type-windshield';
+  if(s.includes('not specified')) return 'type-notspecified';
+  return 'type-others';
+}
+
+function escapeHtml(s){
+  return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function escapeRegex(s){
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// Escapes, then wraps every case-insensitive occurrence of `query` in <mark>.
+function highlight(s, query){
+  const safe = escapeHtml(s);
+  if(!query) return safe;
+  const re = new RegExp('(' + escapeRegex(escapeHtml(query)) + ')', 'ig');
+  return safe.replace(re, '<mark class="hl">$1</mark>');
+}
+
+function fieldScore(value, query){
+  // Lower is better. Assumes value already known to contain query (passed the filter).
+  const v = (value || '').toLowerCase();
+  if(v === query) return 0;
+  if(v.startsWith(query)) return 1;
+  return 2;
+}
+
+function runSearch(){
+  const text = els.qText.value.trim().toLowerCase();
+  const code = els.qCode.value.trim().toLowerCase();
+  const phone = els.qPhone.value.trim().toLowerCase();
+  const pincode = els.qPincode.value.trim().toLowerCase();
+  const pan = els.qPan.value.trim().toLowerCase();
+  const gst = els.qGst.value.trim().toLowerCase();
+  const bank = els.qBank.value.trim().toLowerCase();
+  const district = els.qDistrict.value;
+  const type = els.qType.value;
+
+  const anyActive = text.length > 0 || code.length > 0 || phone.length > 0 || pincode.length > 0 ||
+                     pan.length > 0 || gst.length > 0 || bank.length > 0 || district || type;
+
+  if(!anyActive){
+    currentResults = [];
+    render(true);
+    return;
+  }
+
+  const results = [];
+  for(let i=0; i<DATA.length; i++){
+    const r = DATA[i];
+    // r: [code,name,address,district,type,contact,phone,mobile,email,pincode,pan,gst,bankacc,bankname,ifsc]
+    // Every active field must match (AND, like stacked Excel filters) — then exact/closest matches sort to the top.
+    if(district && r[3] !== district) continue;
+    if(type && r[4] !== type) continue;
+
+    let score = 0;
+
+    if(code){
+      const v = r[0].toLowerCase();
+      if(!v.includes(code)) continue;
+      score += fieldScore(v, code);
+    }
+    if(pincode){
+      const v = r[9].toLowerCase();
+      if(!v.includes(pincode)) continue;
+      score += fieldScore(v, pincode);
+    }
+    if(pan){
+      const v = r[10].toLowerCase();
+      if(!v.includes(pan)) continue;
+      score += fieldScore(v, pan);
+    }
+    if(gst){
+      const v = r[11].toLowerCase();
+      if(!v.includes(gst)) continue;
+      score += fieldScore(v, gst);
+    }
+    if(bank){
+      const v = r[12].toLowerCase();
+      if(!v.includes(bank)) continue;
+      score += fieldScore(v, bank);
+    }
+    if(phone){
+      const tel = r[6].toLowerCase();
+      const mob = r[7].toLowerCase();
+      if(!tel.includes(phone) && !mob.includes(phone)) continue;
+      score += Math.min(
+        tel.includes(phone) ? fieldScore(tel, phone) : 3,
+        mob.includes(phone) ? fieldScore(mob, phone) : 3
+      );
+    }
+    if(text){
+      const nameL = r[1].toLowerCase();
+      const addrL = r[2].toLowerCase();
+      const contactL = r[5].toLowerCase();
+      if(nameL === text) score += 0;
+      else if(nameL.startsWith(text)) score += 1;
+      else if(nameL.includes(text)) score += 2;
+      else if(contactL.includes(text)) score += 3;
+      else if(addrL.includes(text)) score += 4;
+      else continue;
+    }
+
+    results.push({ r, score });
+    if(results.length >= 3000) break; // safety cap while scanning
+  }
+  results.sort((a, b) => a.score - b.score || a.r[1].length - b.r[1].length || a.r[1].localeCompare(b.r[1]));
+  currentResults = results.map(x => x.r);
+  activeQuery = { text, code, phone, pincode, pan, gst, bank };
+  shown = 0;
+  render(false);
+}
+
+function render(isEmpty){
+  if(isEmpty){
+    els.emptyState.style.display = 'block';
+    els.emptyState.querySelector('b').textContent = 'Start a search';
+    els.emptyState.lastChild.textContent = ' Enter a workshop name, code, contact number, pincode — or choose a district / type — to find workshop details for claim registration.';
+    els.cardGrid.style.display = 'none';
+    els.resultsMeta.style.display = 'none';
+    els.loadMoreWrap.style.display = 'none';
+    return;
+  }
+
+  if(currentResults.length === 0){
+    els.emptyState.style.display = 'block';
+    els.emptyState.querySelector('b').textContent = 'No workshops found';
+    els.emptyState.lastChild.textContent = ' Try a broader term, remove a filter, or check the spelling of the workshop name or code.';
+    els.cardGrid.style.display = 'none';
+    els.resultsMeta.style.display = 'none';
+    els.loadMoreWrap.style.display = 'none';
+    return;
+  }
+
+  els.emptyState.style.display = 'none';
+  els.resultsMeta.style.display = 'flex';
+  els.cardGrid.style.display = 'flex';
+  els.resultCount.textContent = currentResults.length.toLocaleString('en-IN');
+  els.cardGrid.innerHTML = ''; // clear stale cards from the previous search before rendering this one
+  appendCards();
+}
+
+function appendCards(){
+  const q = activeQuery;
+  const next = currentResults.slice(shown, shown + PAGE_SIZE);
+  const frag = document.createDocumentFragment();
+  next.forEach(r => {
+    const [code,name,address,district,type,contact,phone,mobile,email,pincode,pan,gst,bankacc,bankname,ifsc] = r;
+    const card = document.createElement('div');
+    card.className = 'row-card';
+
+    const contactLines = [];
+    if(contact) contactLines.push(`<div class="cperson">${highlight(contact, q.text)}</div>`);
+    if(phone) contactLines.push(`<div>Tel: <a href="tel:${escapeHtml(phone)}">${highlight(phone, q.phone)}</a></div>`);
+    if(mobile) contactLines.push(`<div>Mob: <a href="tel:${escapeHtml(mobile)}">${highlight(mobile, q.phone)}</a></div>`);
+    if(email) contactLines.push(`<div><a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></div>`);
+    if(contactLines.length === 0) contactLines.push('<div class="none">No contact on file</div>');
+
+    const kycItems = [];
+    if(pan) kycItems.push(`<span class="kyc-item"><b>PAN</b> ${highlight(pan, q.pan)}</span>`);
+    if(gst) kycItems.push(`<span class="kyc-item"><b>GST</b> ${highlight(gst, q.gst)}</span>`);
+    if(bankacc) kycItems.push(`<span class="kyc-item"><b>A/C</b> ${highlight(bankacc, q.bank)}</span>`);
+    if(bankname) kycItems.push(`<span class="kyc-item"><b>Bank</b> ${escapeHtml(bankname)}</span>`);
+    if(ifsc) kycItems.push(`<span class="kyc-item"><b>IFSC</b> ${escapeHtml(ifsc)}</span>`);
+    const kycStrip = kycItems.length ? `<div class="kyc-strip">${kycItems.join('')}</div>` : '';
+
+    card.innerHTML = `
+      <div class="code-block">
+        <div class="code-val">${highlight(code, q.code)}</div>
+        <div class="type-tag ${typeClass(type)}">${escapeHtml(type)}</div>
+      </div>
+      <div class="main-info">
+        <div class="name">${highlight(name, q.text)}</div>
+        <div class="addr">${highlight(address, q.text) || '<span class="none">Address not on file</span>'}</div>
+        <div class="district-pin">${escapeHtml(district)}${pincode ? ' · ' + highlight(pincode, q.pincode) : ''}</div>
+      </div>
+      <div class="contact-info">${contactLines.join('')}</div>
+      <button class="copy-btn" title="Copy workshop code" data-code="${escapeHtml(code)}">⧉</button>
+      ${kycStrip}
+    `;
+    frag.appendChild(card);
+  });
+  els.cardGrid.appendChild(frag);
+  shown += next.length;
+
+  els.resultRange.textContent = `Showing ${shown.toLocaleString('en-IN')} of ${currentResults.length.toLocaleString('en-IN')}${currentResults.length >= 3000 ? '+' : ''}`;
+  els.loadMoreWrap.style.display = shown < currentResults.length ? 'block' : 'none';
+}
+
+els.cardGrid.addEventListener('click', e => {
+  const btn = e.target.closest('.copy-btn');
+  if(!btn) return;
+  const code = btn.getAttribute('data-code');
+  navigator.clipboard.writeText(code).then(() => {
+    btn.classList.add('copied');
+    btn.textContent = '✓';
+    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = '⧉'; }, 1200);
+  });
+});
+
+els.loadMoreBtn.addEventListener('click', appendCards);
+
+const searchInputs = [els.qText, els.qCode, els.qPhone, els.qPincode, els.qPan, els.qGst, els.qBank];
+searchInputs.forEach(el => el.addEventListener('keydown', e => {
+  if(e.key === 'Enter') runSearch();
+}));
+[els.qDistrict, els.qType].forEach(el => el.addEventListener('change', runSearch));
+els.searchBtn.addEventListener('click', runSearch);
+
+els.clearBtn.addEventListener('click', () => {
+  els.qText.value = ''; els.qCode.value = ''; els.qPhone.value = '';
+  els.qPincode.value = ''; els.qPan.value = ''; els.qGst.value = ''; els.qBank.value = '';
+  els.qDistrict.value = ''; els.qType.value = '';
+  runSearch();
+});
+
+loadWorkshopData();
+</script>
+</body>
+</html>
